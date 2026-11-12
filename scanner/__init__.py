@@ -1,0 +1,1 @@
+"""Independent scanner application."""

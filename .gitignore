@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.py[cod]
+data/
+logs/
+.env
+.env.*
+*.db
+*.sqlite*
+tests/fixtures/approved_b_90s.csv

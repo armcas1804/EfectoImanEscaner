@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Efecto Imán · Escáner</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Ir al escáner</a>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Efecto Imán, inicio"><span class="brand-mark" aria-hidden="true">✦</span><span>Efecto Imán</span></a>
+    <nav class="main-nav" aria-label="Secciones"><button class="nav-tab active" data-page="scanner" aria-current="page">Escáner</button><button class="nav-tab" data-page="history">Historial</button></nav>
+    <div class="clocks"><div><span>NUEVA YORK</span><time id="clock-ny">—:—:—</time></div><div><span>HERMOSILLO</span><time id="clock-hmo">—:—:—</time></div></div>
+    <div class="worker-pill" id="worker-pill"><span class="status-dot"></span><span id="worker-state">Comprobando captura</span></div>
+  </header>
+
+  <main id="workspace">
+    <section class="page-heading">
+      <div><h1 id="page-title">Escáner de apertura</h1><p class="page-description" id="page-description">Gap, giro y calidad del patrón de Bollinger.</p></div>
+      <div class="session-picker"><label for="session-date">Sesión de Nueva York</label><select id="session-date" disabled><option>Sin sesiones guardadas</option></select><span id="session-origin">Consultando sesiones</span></div>
+    </section>
+
+    <div class="notice" id="connection-notice" role="status" hidden></div>
+    <div class="capture-strip"><div><span class="status-dot" id="capture-dot"></span><span id="worker-message">Conectando con el proceso de captura…</span></div><span id="heartbeat-age">—</span></div>
+
+    <section class="metrics" aria-label="Resumen de la sesión">
+      <article class="metric"><span class="metric-label">Empresas</span><div><strong id="metric-universe">72</strong></div><p id="metric-coverage">Esperando precios</p></article>
+      <article class="metric"><span class="metric-label">Candidatas</span><div><strong id="metric-candidates">—</strong></div></article>
+      <article class="metric accent"><span class="metric-label">Score ≥ 70</span><div><strong id="metric-quality">—</strong></div></article>
+      <article class="metric"><span class="metric-label">Corte</span><div><strong id="metric-cut">—</strong><span id="metric-cut-unit">s</span></div><p id="metric-cut-time">Esperando datos</p></article>
+    </section>
+
+    <section class="cut-toolbar" aria-label="Corte de apertura">
+      <div class="cut-label"><div class="cut-tabs" role="group" aria-label="Elegir corte"><span class="cut-indicator" aria-hidden="true"></span><button data-cut="10" disabled>10 s</button><button data-cut="30" disabled>30 s</button><button data-cut="60" disabled>1 min</button><button data-cut="90" disabled>1 min 30 s</button></div></div>
+      <div class="follow-controls"><button id="follow-latest" class="text-button active" aria-pressed="true"><span class="follow-dot"></span>Seguir último corte</button><a class="export-link disabled" id="export-csv" aria-disabled="true" download>Exportar CSV <span aria-hidden="true">↗</span></a></div>
+    </section>
+
+    <div class="scanner-layout">
+      <section class="panel opportunity-panel" aria-labelledby="opportunity-title">
+        <div class="panel-heading"><div><h2 id="opportunity-title">Oportunidades</h2><span id="visible-count">Sin resultados todavía</span></div></div>
+        <div class="table-controls"><label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><input id="ticker-search" type="search" placeholder="Buscar empresa" aria-label="Buscar empresa por símbolo" autocomplete="off"></label><label class="checkbox-label"><input type="checkbox" id="quality-only"> ≥ 70</label></div>
+        <div class="table-view-toggle" role="group" aria-label="Empresas visibles"><button id="show-candidates" class="active" aria-pressed="true">Candidatas</button><button id="show-all" aria-pressed="false">Todas las empresas</button></div>
+        <div class="table-scroll"><table class="opportunity-table"><thead><tr><th scope="col">Empresa</th><th scope="col" aria-sort="descending">Score ↓</th><th scope="col">Gap</th><th scope="col">Fuera BB</th></tr></thead><tbody id="opportunity-rows"></tbody></table><div class="table-empty" id="table-empty"><h3>La sesión aún no tiene datos</h3><p>Los cortes aparecerán cuando el capturador los guarde. También puedes consultar una sesión anterior.</p></div></div>
+      </section>
+
+      <section class="detail-column" aria-label="Detalle de la empresa">
+        <article class="panel chart-panel">
+          <div class="chart-heading"><div><div class="detail-name"><h2 id="selected-ticker">Gráfica</h2><span id="selected-direction" class="direction-tag" hidden></span></div><p id="selected-summary">Selecciona una empresa.</p></div><a id="yahoo-link" class="text-link disabled" target="_blank" rel="noopener noreferrer" aria-disabled="true">Yahoo Finance <span aria-hidden="true">↗</span></a></div>
+          <label class="compact-picker" for="compact-ticker"><span>Empresa</span><select id="compact-ticker" disabled><option>Seleccionar</option></select></label>
+          <div class="chart-modes" role="group" aria-label="Tipo de gráfica"><button data-chart="market" class="active" aria-pressed="true">Mercado externo</button><button data-chart="cut" aria-pressed="false">Vista del corte</button><span id="chart-timeframe">15 MIN · BB(20,2)</span></div>
+          <div class="chart-source-note" id="chart-source-note">Gráfica de TradingView. Su fuente, cotización y retraso pueden diferir de los usados por el escáner.</div>
+          <div class="chart-canvas" id="chart-canvas"><div class="chart-empty" id="chart-placeholder"><p>Selecciona una empresa para ver su gráfica.</p></div><div id="external-chart" hidden></div><div id="cut-chart" hidden></div><div id="chart-error" role="status" hidden></div></div>
+          <div class="chart-footnote" id="chart-footnote">El score pertenece al corte guardado. La gráfica externa muestra el mercado de su proveedor.</div>
+        </article>
+
+        <article class="panel signal-panel" id="signal-panel" hidden>
+          <div class="signal-score"><span class="eyebrow">SCORE DE LA SEÑAL</span><div><strong id="detail-score">—</strong><span>/100</span></div><p id="detail-status">—</p></div>
+          <div class="signal-facts"><div><span>Primer precio</span><strong id="detail-first">—</strong></div><div><span>Precio al corte</span><strong id="detail-price">—</strong></div><div><span>Giro al cierre previo</span><strong id="detail-reversal">—</strong></div><div><span>Ancho BB previo</span><strong id="detail-prior-width">—</strong></div><div><span>Ancho BB al corte</span><strong id="detail-width">—</strong></div><div><span>Expansión de bandas</span><strong id="detail-expansion">—</strong></div></div>
+          <details class="breakdown"><summary>Cómo se obtuvo esta calificación <span aria-hidden="true">+</span></summary><div id="score-breakdown"></div><p id="pattern-comparison"></p><p>Las cuatro calidades se combinan en una media geométrica ponderada. Una banda ancha, inclinada o en expansión limita la nota. La nota mide la similitud al patrón; no es una probabilidad de éxito.</p><p id="pattern-coverage"></p></details>
+        </article>
+        <div class="data-provenance" id="data-provenance" hidden><span id="data-source"></span><span id="data-timestamp"></span></div>
+      </section>
+    </div>
+
+    <footer class="footer"><span>Efecto Imán</span><button class="text-button" id="refresh-now">Actualizar datos</button></footer>
+  </main>
+</body>
+</html>
